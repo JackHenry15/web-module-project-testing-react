@@ -1,14 +1,105 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Display from '../Display';
+
+import {default as mockFetchShow} from '../../api/fetchShow'
+
+jest.mock('../../api/fetchShow');
+
+test("Renders with no props", ()=>{
+    render(<Display/>);
+})
 
 
+test("Show component displays when button is pressed.", async ()=> {
+    mockFetchShow.mockResolvedValueOnce({
+            name: '',
+            seasons: [
+                {
+                    episodes: [
+                        {
+                            airdate: '',
+                            id: '',
+                            name: '',
+                            number: 1,
+                            season: 1,
+                            summary: '',
+                            type: '',
+                        }
+                    ],
+                    id: 0,
+                    name: "Season 1"
+                },
+                {
+                    episodes: [
+                        {
+                            airdate: '',
+                            id: '',
+                            name: '',
+                            number: 1,
+                            season: 1,
+                            summary: '',
+                            type: '',
+                        }
+                    ],
+                    id: 1,
+                    name: "Season 2"
+                }
+            ]
+    })
+    const { getByText } = render(<Display/>);
 
+    const fetchShowButton = getByText(/Press to Get Show Data/i);
+    userEvent.click(fetchShowButton);
+    const showComp = await screen.findByTestId("show-container");
+    expect(showComp).toBeInTheDocument();
+});
 
+test("Select options equal to test data's options", async () =>{
+    mockFetchShow.mockResolvedValueOnce({
+            name: '',
+            seasons: [
+                {
+                    episodes: [
+                        {
+                            airdate: '',
+                            id: '',
+                            name: '',
+                            number: 1,
+                            season: 1,
+                            summary: '',
+                            type: '',
+                        }
+                    ],
+                    id: 0,
+                    name: "Season 1"
+                },
+                {
+                    episodes: [
+                        {
+                            airdate: '',
+                            id: '',
+                            name: '',
+                            number: 1,
+                            season: 1,
+                            summary: '',
+                            type: '',
+                        }
+                    ],
+                    id: 1,
+                    name: "Season 2"
+                }
+            ]
+    })
+    const { getByText } = render(<Display/>);
 
+    const fetchShowButton = getByText(/Press to Get Show Data/i);
+    userEvent.click(fetchShowButton);
 
-
-
-
+    const selectOptions = await screen.findAllByTestId("season-option")
+    expect(selectOptions).toHaveLength(2);
+});
 
 
 
