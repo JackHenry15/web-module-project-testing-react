@@ -91,17 +91,62 @@ test("Select options equal to test data's options", async () =>{
                     name: "Season 2"
                 }
             ]
+        })
+        const { getByText } = render(<Display/>);
+        
+        const fetchShowButton = getByText(/Press to Get Show Data/i);
+        userEvent.click(fetchShowButton);
+        
+        const selectOptions = await screen.findAllByTestId("season-option")
+        expect(selectOptions).toHaveLength(2);
+    });
+    
+test("optional function is called when fetch button pressed", async ()=>{
+    mockFetchShow.mockResolvedValueOnce({
+        name: '',
+        seasons: [
+            {
+                episodes: [
+                    {
+                        airdate: '',
+                        id: '',
+                        name: '',
+                        number: 1,
+                        season: 1,
+                        summary: '',
+                        type: '',
+                    }
+                ],
+                id: 0,
+                name: "Season 1"
+            },
+            {
+                episodes: [
+                    {
+                        airdate: '',
+                        id: '',
+                        name: '',
+                        number: 1,
+                        season: 1,
+                        summary: '',
+                        type: '',
+                    }
+                ],
+                id: 1,
+                name: "Season 2"
+            }
+        ]
     })
-    const { getByText } = render(<Display/>);
+    const props = {
+        displayFunc: jest.fn(),
+    }
+    const { getByText } = render(<Display {...props}/>);
 
     const fetchShowButton = getByText(/Press to Get Show Data/i);
     userEvent.click(fetchShowButton);
-
-    const selectOptions = await screen.findAllByTestId("season-option")
-    expect(selectOptions).toHaveLength(2);
+    await screen.findByTestId("show-container");
+    expect(props.displayFunc).toHaveBeenCalled();
 });
-
-
 
 ///Tasks:
 //1. Add in nessisary imports and values to establish the testing suite.
